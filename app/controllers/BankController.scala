@@ -7,6 +7,7 @@ import play.api.libs.json._
 import models._
 import models.{Customer, MySQLBankManagementSystem}
 import models.BankManagementSystem
+import org.apache.pekko.http.scaladsl.model.headers.HttpEncodingRange.*
 import play.api.i18n.Lang.jsonTagWrites
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.JsObject.writes
@@ -23,13 +24,6 @@ class BankController @Inject()(cc: ControllerComponents,bnk : MySQLBankManagemen
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
 
-  }
-
-  private def withCustomer(id: Int)(operation: Customer => Result): Result = {
-    bnk.showCustomer(id) match {
-      case Some(customer) => operation(customer)
-      case None => NotFound(s"Customer with ID $id not found.")
-    }
   }
 
   def addCustomerOne = Action(parse.json) { request =>
@@ -50,12 +44,12 @@ class BankController @Inject()(cc: ControllerComponents,bnk : MySQLBankManagemen
     Ok(res.get)
   }
 
-  /*def showCustomer(id: Int) = Action {
-    bnk.showCustomer(id) map {
-      case Some(customer) => Ok(Json.toJson(customer))
-      case None => NotFound(s"Customer with ID $id not found.")
-    }
-  }*/
+//  def showCustomer(id: Int) = Action {
+//    bnk.showCustomer(id) map {
+//      case Some(customer) => Ok(Json.toJson(customer))
+//      case None => NotFound(s"Customer with ID $id not found.")
+//    }
+//  }
   def transferMoney = Action(parse.json) { request =>
     val transferData = request.body.as[JsObject]
     val fromId = (transferData \ "fromId").as[Int]
@@ -64,18 +58,25 @@ class BankController @Inject()(cc: ControllerComponents,bnk : MySQLBankManagemen
     bnk.transferMoney(fromId, toId, amount)
     Ok(s"$amount transferred from customer $fromId to customer $toId.")
   }
-
-//def updateCustomerone(id: Int): Action[JsValue] = Action(parse.json) { request =>
-//  val updateData = request.body.as[JsObject]
-//  val updatedBalance = (updateData \ "balance").as[Double]
+//  def updateID(id: Int) = Action { implicit request: Request[AnyContent] =>
 //
-//  // Higher-order function to update the customer's balance
-//  val updateOperation: CustomerOperation = customer => {
-//    bnk.updateCustomer(id, updatedBalance)
-//    Ok(s"Customer with ID $id updated. New balance: $updatedBalance")
+//    def updatedID(id:Int,squareID:Int=>(3*6)): Unit = {
+//      println(squareID(id))
+//    }
+//    val a=updatedID(1,3*8)
+//    Ok(s"Updating ID: $a")
 //  }
-//
-//  withCustomer(id)(updateOperation)
-//}
 
+  def processID(id: Int, processFunction: Int => Result): Result = {
+    processFunction(id)
+  }
+  def updateID(id: Int) = Action { implicit request: Request[AnyContent] =>
+
+    def processFunctionForUpdate(id: Int): Result = {
+      val a=id*id
+      Ok(s"Updating ID: $a")
+    }
+    // Calling  the higher-order function with the ID and the processing function
+    processID(2, processFunctionForUpdate)
+  }
 }

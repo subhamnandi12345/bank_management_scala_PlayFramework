@@ -5,10 +5,10 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.BankController.index()
-GET     /customers             controllers.BankController.showCustomerOne(id: Int)
+GET     /update                   controllers.BankController.updateID(id:Int)
+GET     /customers                  controllers.BankController.showCustomerOne(id: Int)
 POST    /customers                  controllers.BankController.addCustomerOne
-DELETE  /customers              controllers.BankController.deleteCustomerOne(id: Int)
+DELETE  /customers                  controllers.BankController.deleteCustomerOne(id: Int)
 POST    /transfer                   controllers.BankController.transferMoney
-#PUT     /customerUpdate        controllers.BankController.updateCustomer(id: Int)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

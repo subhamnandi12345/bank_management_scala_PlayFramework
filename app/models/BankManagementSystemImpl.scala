@@ -66,15 +66,4 @@ class MySQLBankManagementSystem extends BankManagementSystem {
     depositStatement.close()
   }
 
-//  def updateCustomer(id: Int, amount: Double): Unit = {
-//    val upbalance = "UPDATE customers SET balance = balance ? WHERE id = ?"
-//    val depositStatement: PreparedStatement = connection.prepareStatement(upbalance)
-//    depositStatement.setDouble(1, amount)
-//    depositStatement.setInt(2, id)
-//    depositStatement.executeUpdate()
-//    depositStatement.close()
-//  }
-override def updateCustomer(id: Int, operation: CustomerOperation): Unit = {
-  showCustomer(id).foreach(operation)
-}
 }
